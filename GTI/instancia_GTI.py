@@ -3,8 +3,11 @@ import requests
 import httpx
 from concurrent.futures import ThreadPoolExecutor
 
+from utilis.utils import retry
+
 BASE_URL = "https://api.gtiapi.workers.dev"
 
+#cria o  objeto "agente" com funcoes do webhook
 class AgenteGTI:
     def __init__(self, token, nome=None, timeout=20, debug=False):
         self.token = token
@@ -53,6 +56,7 @@ class AgenteGTI:
             self.conectado = False
 
     # ======================== ENVIAR MENSAGEM ========================
+    @retry(3, 1)
     def enviar_mensagem(self, numero, mensagem, mentions=""):
         if not mensagem:
             print(f"[{self.nome}] Mensagem vazia. Abortando envio.")

@@ -163,7 +163,6 @@ async def conversar_async(agente1, agente2, max_turnos=10, test_mode=False, get_
     print(f"✅ {agente1.nome} enviou {count1} msgs | {agente2.nome} enviou {count2} msgs")
     return True
 
-@retry(3, 1)
 async def enviar_mensagem_async(agente, numero, mensagem):
     resultado = None
     try:
