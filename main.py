@@ -4,7 +4,6 @@ from GTI.instancia_GTI import atualizar_status_parallel
 from IA.ia import conversar_async, get_ia_response_ollama, get_ia_response_gemini
 from utilis.utils import carregar_agentes, verificar_agentes, extrair_numero
 
-
 async def main():
     sem = asyncio.Semaphore(20)  # limite de tarefas concorrentes
     tarefas = []

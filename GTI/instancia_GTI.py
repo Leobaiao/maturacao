@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 BASE_URL = "https://api.gtiapi.workers.dev"
 
+#cria o  objeto "agente" com funcoes do webhook
 class AgenteGTI:
     def __init__(self, token, nome=None, timeout=20, debug=False):
         self.token = token
