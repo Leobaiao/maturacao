@@ -2,10 +2,30 @@ import asyncio
 import json
 import os
 import re
+from functools import wraps
 from dbo.dbo import carregar_agentes_async_do_banco_async
 
 HISTORICO_DIR = "historicos"
 os.makedirs(HISTORICO_DIR, exist_ok=True)
+
+# ===========================
+# Decorador Retry
+# ===========================
+def retry(max_tentativas: int = 3, delay: int = 2, exceptions: tuple = (Exception,)) -> callable:
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            for tentativa in range(1, max_tentativas + 1):
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as e:
+                    print(f"Tentativa {tentativa} falhou: {e}")
+                    if tentativa == max_tentativas:
+                        raise
+                    delay_ms_async(delay)
+            return None
+        return wrapper
+    return decorator
 
 async def criar_pares(agentes_conectados, pares_atuais=set()):
     # Ordena pelos números do nome
@@ -42,7 +62,7 @@ async def carregar_agentes():
     agentes = await carregar_agentes_async_do_banco_async()
     return agentes
 
-
+#salva historico de mensagens
 def salvar_historico(ag1, ag2, historico: list):
     caminho = os.path.join(HISTORICO_DIR, f"{ag1.nome}_{ag2.nome}.json")
     try:
