@@ -24,15 +24,9 @@ conn = pyodbc.connect(DB)
 cursor = conn.cursor()
 
 async def carregar_agentes_async_do_banco_async():
-    """
-    Carrega agentes do banco de forma assíncrona e cria objetos AgenteGTI em paralelo.
-    """
-    query1 = """
-        SELECT TELEFONE, SENHA
-        FROM [NEWWORK].[dbo].[ROTA]
-        WHERE SERVICO='MATURACAO' 
-          AND (TIPO_ROTA = 'MATURACAO') AND (TELEFONE LIKE 'Teste%') 
-    """
+    #Carrega agentes do banco de forma assíncrona e cria objetos AgenteGTI em paralelo.
+
+    #Seleciona as instancias que quer maturar
     query = """
         SELECT TELEFONE, SENHA
         FROM [NEWWORK].[dbo].[ROTA]
@@ -40,12 +34,7 @@ async def carregar_agentes_async_do_banco_async():
           AND (TIPO_ROTA = 'MATURACAO') AND (TELEFONE LIKE 'web%') 
     """
 
-    query3 = """
-        SELECT TELEFONE, SENHA
-        FROM [NEWWORK].[dbo].[ROTA]
-        WHERE SERVICO='MATURACAO' 
-          AND (TIPO_ROTA = 'MATURACAO') AND (TELEFONE LIKE 'Chip%') 
-    """
+
     try:
         dsn = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={os.getenv("SERVER")};DATABASE={os.getenv("DATABASE")};UID={os.getenv("USERNAMEDB")};PWD={os.getenv("PASSWORD")};TrustServerCertificate=yes;'
         import aioodbc
@@ -53,7 +42,7 @@ async def carregar_agentes_async_do_banco_async():
             async with conn.cursor() as cursor:
                 await cursor.execute(query)
                 registros = await cursor.fetchall()
-
+        #cria o agente de acordo com as instancias
         async def criar_agente(telefone_senha):
             telefone, senha = telefone_senha
             agente = AgenteGTI(nome=telefone, token=senha)
